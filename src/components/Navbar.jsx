@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 const Navbar = () => {
   return (
     <header className="bg-gray-100">
-      <navbar className="max-w-5xl mx-auto flex justify-between items-center p-3">
+      <nav className="max-w-5xl mx-auto flex justify-between items-center p-3">
         <Link to={"/"}>
           {" "}
           <h2 className="text-gray-400 font-semibold text-3xl">
@@ -30,7 +30,7 @@ const Navbar = () => {
             <Link to={"/register"}>SignUp</Link>
           </li>
         </ul>
-      </navbar>
+      </nav>
     </header>
   );
 };

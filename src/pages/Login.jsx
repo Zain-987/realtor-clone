@@ -1,7 +1,11 @@
 import { Field, Form, Formik } from "formik";
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
+import { LoginUser } from "../apis/Internal";
+import { setUser } from "../store/UserSlice";
+import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
 
 const SignupSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Email Required !"),
@@ -10,6 +14,20 @@ const SignupSchema = Yup.object().shape({
     .required("Password Required ! "),
 });
 const Login = () => {
+  const [Error, setError] = useState("");
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const HanldeLoginSubmit = async (data) => {
+    let response = await LoginUser(data);
+
+    if (response.status === 200) {
+      dispatch(setUser(response.data.user));
+      navigate("/");
+      toast.success("Logged in Successfully ! ");
+    } else if (response.code === "ERR_BAD_REQUEST") {
+      setError(response.response.data.message);
+    }
+  };
   return (
     <section className="flex min-h-[80vh] justify-center items-center">
       <Formik
@@ -20,7 +38,7 @@ const Login = () => {
         validationSchema={SignupSchema}
         onSubmit={(values) => {
           // same shape as initial values
-          console.log(values);
+          HanldeLoginSubmit(values);
         }}
       >
         {({ errors, touched }) => (

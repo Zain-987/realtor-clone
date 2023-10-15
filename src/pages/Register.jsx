@@ -1,8 +1,9 @@
 import { Field, Form, Formik } from "formik";
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
-
+import { toast } from "react-hot-toast";
+import { registerUser } from "../apis/Internal";
 const SignupSchema = Yup.object().shape({
   username: Yup.string()
     .matches(/^[a-zA-Z0-9]+$/, "Username must be Alpha Numeric !")
@@ -12,7 +13,19 @@ const SignupSchema = Yup.object().shape({
     .matches(/^[a-zA-Z0-9]+$/, "Only Alpha Numeric Characters are allowed!")
     .required("Password Required ! "),
 });
-const Login = () => {
+const Register = () => {
+  const [Error, setError] = useState("");
+  const navigate = useNavigate();
+  const HanldeRegisterSubmit = async (data) => {
+    let response = await registerUser(data);
+
+    if (response.status === 201) {
+      navigate("/login");
+      toast.success("Registered Successfully ! ");
+    } else if (response.code === "ERR_BAD_REQUEST") {
+      setError(response.response.data.message);
+    }
+  };
   return (
     <section className="flex min-h-[80vh] justify-center items-center">
       <Formik
@@ -24,7 +37,7 @@ const Login = () => {
         validationSchema={SignupSchema}
         onSubmit={(values) => {
           // same shape as initial values
-          console.log(values);
+          HanldeRegisterSubmit(values);
         }}
       >
         {({ errors, touched }) => (
@@ -70,6 +83,7 @@ const Login = () => {
                 <span className="text-blue-500 cursor-pointer"> Login Now</span>
               </Link>
             </p>
+            <p className="text-red-500">{Error}</p>
             {/* </section> */}
           </Form>
         )}
@@ -78,4 +92,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;

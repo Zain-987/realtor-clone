@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt")
+const jwt = require("jsonwebtoken")
 const USERDTO = require("../DTO/USERDTO")
 const UserModel = require("../Models/UserModel")
 const { SECRET_KEY } = require("../Configurations/config")
@@ -22,19 +23,21 @@ const registerUser = async (req , res , next) => {
 
 
         // Hashing the Password
-
+        
         const hashedPassword = bcrypt.hashSync(password , 10)
-
-
+        
+        
         const user = await UserModel.create({
             username , email , password : hashedPassword
         })
-
+        
+        
 
         const userDto = new USERDTO(user)
 
         return res.status(201).json({user : userDto , auth : true})
     }catch(error){
+        console.log(error.message);
         return next(error)
     }
 }
@@ -54,11 +57,30 @@ const loginUser = async (req , res , next) => {
             })
         }
 
+        
+        const isPassowrdOkay = await bcrypt.compare(password , isUserExists.password)
+        
+        if(!isPassowrdOkay){
+            return next({
+                status : 403, 
+                message : "Invalid Credentials ! "
+            })
+        }
+        
+        
+        
+        
         // Creating jwt Tokens 
+        
+        const token = jwt.sign({payload : isUserExists._id} , SECRET_KEY)
+        
+        res.cookie("auth" , token , {httpOnly : true})
+        
+        
 
-        const token = jwt .sign({payload : isUserExists._id} , SECRET_KEY)
+        let userDto = new USERDTO(isUserExists)
 
-        req.cookie("auth" , token , {httpOnly : true})
+        return res.status(200).json({user : userDto , auth : true})
 
     }catch(error){
         return next(error)
