@@ -19,8 +19,8 @@ const Navbar = () => {
           <BiSearch size={24} />
         </form>
 
-        <ul className="flex items-center space-x-6 text-lg ">
-          <li className="hover:underline">
+        <ul className="md:flex hidden items-center space-x-6 text-lg ">
+          <li className="hover:underline ">
             <Link to={"/"}>Home</Link>
           </li>
           <li className="hover:underline">

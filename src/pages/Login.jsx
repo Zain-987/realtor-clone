@@ -1,5 +1,6 @@
 import { Field, Form, Formik } from "formik";
 import React from "react";
+import { Link } from "react-router-dom";
 import * as Yup from "yup";
 
 const SignupSchema = Yup.object().shape({
@@ -52,7 +53,12 @@ const Login = () => {
             </button>
             <p>
               New Here ?{" "}
-              <span className="text-blue-500 cursor-pointer">Register Now</span>
+              <Link to="/register">
+                <span className="text-blue-500 cursor-pointer">
+                  {" "}
+                  Register Now
+                </span>
+              </Link>
             </p>
             {/* </section> */}
           </Form>
